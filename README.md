@@ -101,9 +101,19 @@ Portfolios are classified based on portfolio name:
 | File | Description |
 |------|-------------|
 | `generate_excel_report.py` | Python script to generate the Excel template |
-| `Campaign_Report_Template.xlsx` | Pre-built Excel template |
+| `Campaign_Report_Template.xlsx` | Original Excel template (Desktop Excel) |
+| `Campaign_Report_Template_v2.xlsx` | Excel Online-compatible version (recommended) |
 | `requirements.txt` | Python dependencies |
 | `README.md` | This file |
+
+## Version Differences
+
+| Feature | v1 (Original) | v2 (Excel Online) |
+|---------|---------------|-------------------|
+| Named Ranges | Yes | No (uses inline lists) |
+| Pre-filled formulas in data sheets | Yes | No (shows formula text only) |
+| Excel Online compatible | No | Yes |
+| Desktop Excel compatible | Yes | Yes |
 
 ## Technical Details
 

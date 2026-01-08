@@ -321,16 +321,10 @@ def create_settings_sheet(wb):
     ws['C13'] = "Competitor"
     ws['D13'] = "Non-Branded"
 
-    # Create named ranges for data validation
-    from openpyxl.workbook.defined_name import DefinedName
-    wb.defined_names['PortfolioOptions'] = DefinedName('PortfolioOptions', attr_text='Settings!$B$11:$D$11')
-    wb.defined_names['TimePeriodOptions'] = DefinedName('TimePeriodOptions', attr_text='Settings!$B$12:$D$12')
-    wb.defined_names['SegmentOptions'] = DefinedName('SegmentOptions', attr_text='Settings!$B$13:$D$13')
-
-    # Add data validation to control cells
+    # Add data validation to control cells (using simple list for Excel Online compatibility)
     portfolio_dv = DataValidation(
         type="list",
-        formula1="PortfolioOptions",
+        formula1='"Overall,JN,Non-JN"',
         allow_blank=False
     )
     portfolio_dv.error = "Please select from dropdown"
@@ -340,7 +334,7 @@ def create_settings_sheet(wb):
 
     period_dv = DataValidation(
         type="list",
-        formula1="TimePeriodOptions",
+        formula1='"Daily,Weekly,Monthly"',
         allow_blank=False
     )
     period_dv.error = "Please select from dropdown"
@@ -391,21 +385,28 @@ def create_campaign_data_sheet(wb):
         cell = ws.cell(row=4, column=col, value=header)
         apply_header_style(cell)
 
-    # Add calculated columns
+    # Add calculated column headers (formulas will be added by user after pasting data)
     calc_headers = [
-        ("O4", "Portfolio Type", "=IF(ISNUMBER(SEARCH(\"JN\",B5)),\"JN\",\"Non-JN\")"),
-        ("P4", "Segment", "=IF(ISNUMBER(SEARCH(\"branded\",C5)),\"Branded\",IF(OR(ISNUMBER(SEARCH(\" pat \",C5)),ISNUMBER(SEARCH(\"- pat -\",C5))),\"Competitor\",\"Non-Branded\"))"),
-        ("Q4", "Week", "=TEXT(A5,\"YYYY\")\"-W\"&TEXT(WEEKNUM(A5),\"00\")"),
-        ("R4", "Month", "=TEXT(A5,\"MMM YYYY\")"),
+        ("O4", "Portfolio Type"),
+        ("P4", "Segment"),
+        ("Q4", "Week"),
+        ("R4", "Month"),
     ]
 
-    for cell_ref, header, formula in calc_headers:
+    for cell_ref, header in calc_headers:
         cell = ws[cell_ref]
         cell.value = header
         apply_header_style(cell)
-        # Add formula in row 5 as example
-        example_cell = ws[cell_ref[0] + "5"]
-        example_cell.value = formula
+
+    # Add formula instructions row
+    ws['O3'] = "Formula: =IF(ISNUMBER(SEARCH(\"JN\",B5)),\"JN\",\"Non-JN\")"
+    ws['O3'].font = Font(size=8, italic=True, color=COLORS['muted'])
+    ws['P3'] = "Formula: =IF(ISNUMBER(SEARCH(\"branded\",C5)),\"Branded\",IF(OR(ISNUMBER(SEARCH(\" pat \",C5)),ISNUMBER(SEARCH(\"- pat -\",C5))),\"Competitor\",\"Non-Branded\"))"
+    ws['P3'].font = Font(size=8, italic=True, color=COLORS['muted'])
+    ws['Q3'] = "Formula: =TEXT(A5,\"YYYY\")\"-W\"&TEXT(WEEKNUM(A5),\"00\")"
+    ws['Q3'].font = Font(size=8, italic=True, color=COLORS['muted'])
+    ws['R3'] = "Formula: =TEXT(A5,\"MMM YYYY\")"
+    ws['R3'].font = Font(size=8, italic=True, color=COLORS['muted'])
 
     # Set column widths
     widths = [12, 20, 40, 30, 12, 10, 12, 14, 14, 12, 12, 12, 14, 14, 12, 14, 12, 12]
@@ -440,18 +441,22 @@ def create_business_data_sheet(wb):
         cell = ws.cell(row=4, column=col, value=header)
         apply_header_style(cell, 'competitor')
 
-    # Add calculated columns
+    # Add calculated column headers (formulas will be added by user after pasting data)
     calc_headers = [
-        ("H4", "Week", "=TEXT(A5,\"YYYY\")\"-W\"&TEXT(WEEKNUM(A5),\"00\")"),
-        ("I4", "Month", "=TEXT(A5,\"MMM YYYY\")"),
+        ("H4", "Week"),
+        ("I4", "Month"),
     ]
 
-    for cell_ref, header, formula in calc_headers:
+    for cell_ref, header in calc_headers:
         cell = ws[cell_ref]
         cell.value = header
         apply_header_style(cell, 'competitor')
-        example_cell = ws[cell_ref[0] + "5"]
-        example_cell.value = formula
+
+    # Add formula instructions row
+    ws['H3'] = "Formula: =TEXT(A5,\"YYYY\")\"-W\"&TEXT(WEEKNUM(A5),\"00\")"
+    ws['H3'].font = Font(size=8, italic=True, color=COLORS['muted'])
+    ws['I3'] = "Formula: =TEXT(A5,\"MMM YYYY\")"
+    ws['I3'].font = Font(size=8, italic=True, color=COLORS['muted'])
 
     # Set column widths
     widths = [12, 18, 14, 12, 12, 16, 18, 12, 12]
@@ -1354,8 +1359,8 @@ def main():
 
     wb = create_campaign_report_workbook()
 
-    # Save to file
-    output_path = os.path.join(os.path.dirname(__file__), "Campaign_Report_Template.xlsx")
+    # Save to file (v2 = Excel Online compatible)
+    output_path = os.path.join(os.path.dirname(__file__), "Campaign_Report_Template_v2.xlsx")
     wb.save(output_path)
 
     print(f"Excel template saved to: {output_path}")
