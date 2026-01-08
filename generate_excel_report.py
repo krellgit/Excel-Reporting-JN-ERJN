@@ -367,18 +367,20 @@ def create_campaign_data_sheet(wb):
     # Instructions at top
     ws['A1'] = "PASTE YOUR SPONSORED PRODUCTS CAMPAIGN REPORT DATA BELOW"
     ws['A1'].font = Font(bold=True, size=12, color=COLORS['primary'])
-    ws.merge_cells('A1:R1')
+    ws.merge_cells('A1:Z1')
 
-    ws['A2'] = "Format: Copy all data including headers from your CSV export"
+    ws['A2'] = "Format: Copy all data including headers from your CSV export (row 4 shows expected columns)"
     ws['A2'].font = Font(italic=True, color=COLORS['muted'])
 
-    # Expected headers (row 4)
+    # Expected headers (row 4) - matching actual Krell campaign report
     headers = [
-        "Date", "Portfolio name", "Campaign Name", "Ad Group Name",
-        "Impressions", "Clicks", "Spend", "7 Day Total Sales",
-        "7 Day Total Orders (#)", "7 Day Conversion Rate",
-        "Cost Per Click (CPC)", "Click-Thru Rate (CTR)",
-        "7 Day Advertised SKU Sales", "7 Day Other SKU Sales"
+        "Date", "Portfolio name", "Program Type", "Campaign Name", "Retailer",
+        "Country", "Status", "Currency", "Budget Amount", "Targeting Type",
+        "Bidding strategy", "Impressions", "Last Year Impressions", "Clicks",
+        "Last Year Clicks", "Click-Thru Rate (CTR)", "Spend", "Last Year Spend",
+        "Cost Per Click (CPC)", "Last Year Cost Per Click (CPC)", "7 Day Total Orders (#)",
+        "Total Advertising Cost of Sales (ACOS) ", "Total Return on Advertising Spend (ROAS)",
+        "7 Day Total Sales "
     ]
 
     for col, header in enumerate(headers, 1):
@@ -387,10 +389,10 @@ def create_campaign_data_sheet(wb):
 
     # Add calculated column headers (formulas will be added by user after pasting data)
     calc_headers = [
-        ("O4", "Portfolio Type"),
-        ("P4", "Segment"),
-        ("Q4", "Week"),
-        ("R4", "Month"),
+        ("Y4", "Portfolio Type"),
+        ("Z4", "Segment"),
+        ("AA4", "Week"),
+        ("AB4", "Month"),
     ]
 
     for cell_ref, header in calc_headers:
@@ -399,23 +401,23 @@ def create_campaign_data_sheet(wb):
         apply_header_style(cell)
 
     # Add formula instructions row
-    ws['O3'] = "Formula: =IF(ISNUMBER(SEARCH(\"JN\",B5)),\"JN\",\"Non-JN\")"
-    ws['O3'].font = Font(size=8, italic=True, color=COLORS['muted'])
-    ws['P3'] = "Formula: =IF(ISNUMBER(SEARCH(\"branded\",C5)),\"Branded\",IF(OR(ISNUMBER(SEARCH(\" pat \",C5)),ISNUMBER(SEARCH(\"- pat -\",C5))),\"Competitor\",\"Non-Branded\"))"
-    ws['P3'].font = Font(size=8, italic=True, color=COLORS['muted'])
-    ws['Q3'] = "Formula: =TEXT(A5,\"YYYY\")\"-W\"&TEXT(WEEKNUM(A5),\"00\")"
-    ws['Q3'].font = Font(size=8, italic=True, color=COLORS['muted'])
-    ws['R3'] = "Formula: =TEXT(A5,\"MMM YYYY\")"
-    ws['R3'].font = Font(size=8, italic=True, color=COLORS['muted'])
+    ws['Y3'] = "=IF(ISNUMBER(SEARCH(\"JN\",B5)),\"JN\",\"Non-JN\")"
+    ws['Y3'].font = Font(size=8, italic=True, color=COLORS['muted'])
+    ws['Z3'] = "=IF(ISNUMBER(SEARCH(\"branded\",D5)),\"Branded\",IF(OR(ISNUMBER(SEARCH(\" pat \",D5)),ISNUMBER(SEARCH(\"- pat -\",D5))),\"Competitor\",\"Non-Branded\"))"
+    ws['Z3'].font = Font(size=8, italic=True, color=COLORS['muted'])
+    ws['AA3'] = "=TEXT(A5,\"YYYY\")\"-W\"&TEXT(WEEKNUM(A5),\"00\")"
+    ws['AA3'].font = Font(size=8, italic=True, color=COLORS['muted'])
+    ws['AB3'] = "=TEXT(A5,\"MMM YYYY\")"
+    ws['AB3'].font = Font(size=8, italic=True, color=COLORS['muted'])
 
     # Set column widths
-    widths = [12, 20, 40, 30, 12, 10, 12, 14, 14, 12, 12, 12, 14, 14, 12, 14, 12, 12]
+    widths = [14, 25, 18, 50, 10, 12, 10, 8, 12, 16, 20, 12, 12, 10, 10, 12, 12, 12, 12, 12, 14, 14, 14, 14, 12, 14, 12, 12]
     for i, width in enumerate(widths, 1):
         ws.column_dimensions[get_column_letter(i)].width = width
 
-    # Create as Excel Table for easier filtering
-    ws['A3'] = "Data Table:"
-    ws['A3'].font = Font(bold=True, size=11, color=COLORS['secondary'])
+    # Column reference guide
+    ws['A3'] = "Key columns: A=Date, B=Portfolio, D=Campaign, L=Impressions, N=Clicks, Q=Spend, X=Sales, U=Orders"
+    ws['A3'].font = Font(bold=True, size=9, color=COLORS['secondary'])
 
 
 def create_business_data_sheet(wb):
@@ -425,16 +427,21 @@ def create_business_data_sheet(wb):
     # Instructions at top
     ws['A1'] = "PASTE YOUR BUSINESS REPORT DATA BELOW"
     ws['A1'].font = Font(bold=True, size=12, color=COLORS['competitor'])
-    ws.merge_cells('A1:J1')
+    ws.merge_cells('A1:S1')
 
     ws['A2'] = "Required for TACOS calculation and Organic vs Paid analysis"
     ws['A2'].font = Font(italic=True, color=COLORS['muted'])
 
-    # Expected headers (row 4)
+    # Expected headers (row 4) - matching actual Krell business report
     headers = [
-        "Date", "Ordered Product Sales", "Units Ordered",
-        "Sessions", "Page Views", "Session Percentage",
-        "Unit Session Percentage"
+        "Date", "Ordered Product Sales", "Ordered Product Sales - B2B",
+        "Units Ordered", "Units Ordered - B2B", "Total Order Items",
+        "Total Order Items - B2B", "Average Sales per Order Item",
+        "Average Sales per Order Item - B2B", "Average Units per Order Item",
+        "Average Units per Order Item - B2B", "Average Selling Price",
+        "Average Selling Price - B2B", "Sessions - Total", "Sessions - Total - B2B",
+        "Order Item Session Percentage", "Order Item Session Percentage - B2B",
+        "Average Offer Count"
     ]
 
     for col, header in enumerate(headers, 1):
@@ -443,8 +450,8 @@ def create_business_data_sheet(wb):
 
     # Add calculated column headers (formulas will be added by user after pasting data)
     calc_headers = [
-        ("H4", "Week"),
-        ("I4", "Month"),
+        ("S4", "Week"),
+        ("T4", "Month"),
     ]
 
     for cell_ref, header in calc_headers:
@@ -453,13 +460,17 @@ def create_business_data_sheet(wb):
         apply_header_style(cell, 'competitor')
 
     # Add formula instructions row
-    ws['H3'] = "Formula: =TEXT(A5,\"YYYY\")\"-W\"&TEXT(WEEKNUM(A5),\"00\")"
-    ws['H3'].font = Font(size=8, italic=True, color=COLORS['muted'])
-    ws['I3'] = "Formula: =TEXT(A5,\"MMM YYYY\")"
-    ws['I3'].font = Font(size=8, italic=True, color=COLORS['muted'])
+    ws['S3'] = "=TEXT(A5,\"YYYY\")\"-W\"&TEXT(WEEKNUM(A5),\"00\")"
+    ws['S3'].font = Font(size=8, italic=True, color=COLORS['muted'])
+    ws['T3'] = "=TEXT(A5,\"MMM YYYY\")"
+    ws['T3'].font = Font(size=8, italic=True, color=COLORS['muted'])
+
+    # Column reference guide
+    ws['A3'] = "Key columns: A=Date, B=Ordered Product Sales (Total Sales), D=Units Ordered, N=Sessions"
+    ws['A3'].font = Font(bold=True, size=9, color=COLORS['competitor'])
 
     # Set column widths
-    widths = [12, 18, 14, 12, 12, 16, 18, 12, 12]
+    widths = [12, 18, 18, 14, 14, 14, 14, 18, 18, 18, 18, 16, 16, 14, 14, 20, 20, 16, 12, 12]
     for i, width in enumerate(widths, 1):
         ws.column_dimensions[get_column_letter(i)].width = width
 
@@ -511,7 +522,7 @@ def create_dashboard_sheet(wb):
     ws.merge_cells('A8:D8')
 
     # Formula to calculate Ad Sales based on portfolio selection
-    ws['A9'] = '=SUMIFS(\'Campaign Data\'!H:H,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!O:O,IF(Settings!B4="Overall","*",IF(Settings!B4="JN","JN","Non-JN")))'
+    ws['A9'] = '=SUMIFS(\'Campaign Data\'!X:X,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!Y:Y,IF(Settings!B4="Overall","*",IF(Settings!B4="JN","JN","Non-JN")))'
     ws['A9'].number_format = '$#,##0'
     ws['A9'].font = Font(bold=True, size=36, color='FFFFFF')
     ws['A9'].fill = PatternFill(start_color=COLORS['secondary'], end_color=COLORS['secondary'], fill_type='solid')
@@ -597,12 +608,12 @@ def create_dashboard_sheet(wb):
 
         # Spend formula
         spend_cell = ws.cell(row=row, column=2)
-        spend_cell.value = f'=SUMIFS(\'Campaign Data\'!G:G,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!P:P,"{segment}")'
+        spend_cell.value = f'=SUMIFS(\'Campaign Data\'!Q:Q,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!Z:Z,"{segment}")'
         spend_cell.number_format = '$#,##0'
 
         # Sales formula
         sales_cell = ws.cell(row=row, column=3)
-        sales_cell.value = f'=SUMIFS(\'Campaign Data\'!H:H,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!P:P,"{segment}")'
+        sales_cell.value = f'=SUMIFS(\'Campaign Data\'!X:X,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!Z:Z,"{segment}")'
         sales_cell.number_format = '$#,##0'
 
         # ROAS formula
@@ -672,7 +683,7 @@ def create_executive_summary_sheet(wb):
     ws.merge_cells('A5:D5')
 
     # Current month ad sales
-    ws['A6'] = '=SUMIFS(\'Campaign Data\'!H:H,\'Campaign Data\'!R:R,TEXT(EOMONTH(Settings!B7,-1)+1,"MMM YYYY"))'
+    ws['A6'] = '=SUMIFS(\'Campaign Data\'!X:X,\'Campaign Data\'!AB:AB,TEXT(EOMONTH(Settings!B7,-1)+1,"MMM YYYY"))'
     ws['A6'].number_format = '$#,##0'
     ws['A6'].font = Font(bold=True, size=32, color='FFFFFF')
     ws['A6'].fill = PatternFill(start_color=COLORS['secondary'], end_color=COLORS['secondary'], fill_type='solid')
@@ -687,15 +698,15 @@ def create_executive_summary_sheet(wb):
     ws.merge_cells('A7:D7')
 
     # Previous month value for comparison (hidden or in column E)
-    ws['E6'] = '=SUMIFS(\'Campaign Data\'!H:H,\'Campaign Data\'!R:R,TEXT(EOMONTH(Settings!B7,-2)+1,"MMM YYYY"))'
+    ws['E6'] = '=SUMIFS(\'Campaign Data\'!X:X,\'Campaign Data\'!AB:AB,TEXT(EOMONTH(Settings!B7,-2)+1,"MMM YYYY"))'
     ws['E6'].number_format = '$#,##0'
     ws.column_dimensions['E'].hidden = True
 
     # 4 KPI Cards Row
     kpi_row = 9
     kpis = [
-        ("AD SPEND", "=SUMIFS('Campaign Data'!G:G,'Campaign Data'!R:R,TEXT(EOMONTH(Settings!B7,-1)+1,\"MMM YYYY\"))", "$#,##0"),
-        ("AD SALES", "=SUMIFS('Campaign Data'!H:H,'Campaign Data'!R:R,TEXT(EOMONTH(Settings!B7,-1)+1,\"MMM YYYY\"))", "$#,##0"),
+        ("AD SPEND", "=SUMIFS('Campaign Data'!Q:Q,'Campaign Data'!R:R,TEXT(EOMONTH(Settings!B7,-1)+1,\"MMM YYYY\"))", "$#,##0"),
+        ("AD SALES", "=SUMIFS('Campaign Data'!X:X,'Campaign Data'!R:R,TEXT(EOMONTH(Settings!B7,-1)+1,\"MMM YYYY\"))", "$#,##0"),
         ("ROAS", "=IF(A10>0,C10/A10,0)", "0.00\"x\""),
         ("TACOS", "=IF(SUMIFS('Business Data'!B:B,'Business Data'!I:I,TEXT(EOMONTH(Settings!B7,-1)+1,\"MMM YYYY\"))>0,A10/SUMIFS('Business Data'!B:B,'Business Data'!I:I,TEXT(EOMONTH(Settings!B7,-1)+1,\"MMM YYYY\")),0)", "0.0%"),
     ]
@@ -832,7 +843,7 @@ def create_segment_performance_sheet(wb):
         name_cell.font = Font(bold=True, color='FFFFFF')
 
         # Spend
-        ws.cell(row=row, column=2, value=f'=SUMIFS(\'Campaign Data\'!G:G,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!P:P,"{segment}")')
+        ws.cell(row=row, column=2, value=f'=SUMIFS(\'Campaign Data\'!Q:Q,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!Z:Z,"{segment}")')
         ws.cell(row=row, column=2).number_format = '$#,##0'
 
         # Spend %
@@ -840,7 +851,7 @@ def create_segment_performance_sheet(wb):
         ws.cell(row=row, column=3).number_format = '0.0%'
 
         # Sales
-        ws.cell(row=row, column=4, value=f'=SUMIFS(\'Campaign Data\'!H:H,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!P:P,"{segment}")')
+        ws.cell(row=row, column=4, value=f'=SUMIFS(\'Campaign Data\'!X:X,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!Z:Z,"{segment}")')
         ws.cell(row=row, column=4).number_format = '$#,##0'
 
         # Sales %
@@ -888,20 +899,20 @@ def create_segment_performance_sheet(wb):
         ws.cell(row=row, column=1, value=segment).font = Font(bold=True)
 
         # JN metrics
-        ws.cell(row=row, column=2, value=f'=SUMIFS(\'Campaign Data\'!G:G,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!P:P,"{segment}",\'Campaign Data\'!O:O,"JN")')
+        ws.cell(row=row, column=2, value=f'=SUMIFS(\'Campaign Data\'!Q:Q,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!Z:Z,"{segment}",\'Campaign Data\'!Y:Y,"JN")')
         ws.cell(row=row, column=2).number_format = '$#,##0'
 
-        ws.cell(row=row, column=3, value=f'=SUMIFS(\'Campaign Data\'!H:H,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!P:P,"{segment}",\'Campaign Data\'!O:O,"JN")')
+        ws.cell(row=row, column=3, value=f'=SUMIFS(\'Campaign Data\'!X:X,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!Z:Z,"{segment}",\'Campaign Data\'!Y:Y,"JN")')
         ws.cell(row=row, column=3).number_format = '$#,##0'
 
         ws.cell(row=row, column=4, value=f'=IF(B{row}>0,C{row}/B{row},0)')
         ws.cell(row=row, column=4).number_format = '0.00'
 
         # Non-JN metrics
-        ws.cell(row=row, column=5, value=f'=SUMIFS(\'Campaign Data\'!G:G,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!P:P,"{segment}",\'Campaign Data\'!O:O,"Non-JN")')
+        ws.cell(row=row, column=5, value=f'=SUMIFS(\'Campaign Data\'!Q:Q,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!Z:Z,"{segment}",\'Campaign Data\'!Y:Y,"Non-JN")')
         ws.cell(row=row, column=5).number_format = '$#,##0'
 
-        ws.cell(row=row, column=6, value=f'=SUMIFS(\'Campaign Data\'!H:H,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!P:P,"{segment}",\'Campaign Data\'!O:O,"Non-JN")')
+        ws.cell(row=row, column=6, value=f'=SUMIFS(\'Campaign Data\'!X:X,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!Z:Z,"{segment}",\'Campaign Data\'!Y:Y,"Non-JN")')
         ws.cell(row=row, column=6).number_format = '$#,##0'
 
         ws.cell(row=row, column=7, value=f'=IF(E{row}>0,F{row}/E{row},0)')
@@ -1092,7 +1103,7 @@ def create_organic_vs_paid_sheet(wb):
     # Formulas
     ws['A6'] = '=SUMIFS(\'Business Data\'!B:B,\'Business Data\'!A:A,">="&Settings!B6,\'Business Data\'!A:A,"<="&Settings!B7)'
     ws['A6'].number_format = '$#,##0'
-    ws['B6'] = '=SUMIFS(\'Campaign Data\'!H:H,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7)'
+    ws['B6'] = '=SUMIFS(\'Campaign Data\'!X:X,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7)'
     ws['B6'].number_format = '$#,##0'
     ws['C6'] = '=MAX(0,A6-B6)'
     ws['C6'].number_format = '$#,##0'
@@ -1100,7 +1111,7 @@ def create_organic_vs_paid_sheet(wb):
     ws['D6'].number_format = '0.0%'
     ws['E6'] = '=IF(A6>0,C6/A6,0)'
     ws['E6'].number_format = '0.0%'
-    ws['F6'] = '=IF(A6>0,SUMIFS(\'Campaign Data\'!G:G,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7)/A6,0)'
+    ws['F6'] = '=IF(A6>0,SUMIFS(\'Campaign Data\'!Q:Q,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7)/A6,0)'
     ws['F6'].number_format = '0.0%'
 
     for col in range(1, 7):
@@ -1162,17 +1173,17 @@ def create_portfolio_sheets(wb):
             apply_header_style(cell, color_key)
 
         # Formulas
-        ws['A5'] = f'=SUMIFS(\'Campaign Data\'!G:G,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!O:O,"{portfolio_filter}")'
+        ws['A5'] = f'=SUMIFS(\'Campaign Data\'!Q:Q,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!Y:Y,"{portfolio_filter}")'
         ws['A5'].number_format = '$#,##0'
-        ws['B5'] = f'=SUMIFS(\'Campaign Data\'!H:H,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!O:O,"{portfolio_filter}")'
+        ws['B5'] = f'=SUMIFS(\'Campaign Data\'!X:X,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!Y:Y,"{portfolio_filter}")'
         ws['B5'].number_format = '$#,##0'
         ws['C5'] = '=IF(A5>0,B5/A5,0)'
         ws['C5'].number_format = '0.00'
         ws['D5'] = '=IF(B5>0,A5/B5,0)'
         ws['D5'].number_format = '0.0%'
-        ws['E5'] = f'=SUMIFS(\'Campaign Data\'!I:I,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!O:O,"{portfolio_filter}")'
+        ws['E5'] = f'=SUMIFS(\'Campaign Data\'!U:U,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!Y:Y,"{portfolio_filter}")'
         ws['E5'].number_format = '#,##0'
-        ws['F5'] = f'=SUMIFS(\'Campaign Data\'!F:F,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!O:O,"{portfolio_filter}")'
+        ws['F5'] = f'=SUMIFS(\'Campaign Data\'!N:N,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!Y:Y,"{portfolio_filter}")'
         ws['F5'].number_format = '#,##0'
         ws['G5'] = '=IF(F5>0,E5/F5,0)'
         ws['G5'].number_format = '0.00%'
@@ -1195,10 +1206,10 @@ def create_portfolio_sheets(wb):
         for row, segment in enumerate(segments, 10):
             ws.cell(row=row, column=1, value=segment).font = Font(bold=True)
 
-            ws.cell(row=row, column=2, value=f'=SUMIFS(\'Campaign Data\'!G:G,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!O:O,"{portfolio_filter}",\'Campaign Data\'!P:P,"{segment}")')
+            ws.cell(row=row, column=2, value=f'=SUMIFS(\'Campaign Data\'!Q:Q,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!Y:Y,"{portfolio_filter}",\'Campaign Data\'!Z:Z,"{segment}")')
             ws.cell(row=row, column=2).number_format = '$#,##0'
 
-            ws.cell(row=row, column=3, value=f'=SUMIFS(\'Campaign Data\'!H:H,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!O:O,"{portfolio_filter}",\'Campaign Data\'!P:P,"{segment}")')
+            ws.cell(row=row, column=3, value=f'=SUMIFS(\'Campaign Data\'!X:X,\'Campaign Data\'!A:A,">="&Settings!B6,\'Campaign Data\'!A:A,"<="&Settings!B7,\'Campaign Data\'!Y:Y,"{portfolio_filter}",\'Campaign Data\'!Z:Z,"{segment}")')
             ws.cell(row=row, column=3).number_format = '$#,##0'
 
             ws.cell(row=row, column=4, value=f'=IF(B{row}>0,C{row}/B{row},0)')
