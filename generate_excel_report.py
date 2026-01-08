@@ -400,15 +400,7 @@ def create_campaign_data_sheet(wb):
         cell.value = header
         apply_header_style(cell)
 
-    # Add formula instructions row
-    ws['Y3'] = "=IF(ISNUMBER(SEARCH(\"JN\",B5)),\"JN\",\"Non-JN\")"
-    ws['Y3'].font = Font(size=8, italic=True, color=COLORS['muted'])
-    ws['Z3'] = "=IF(ISNUMBER(SEARCH(\"branded\",D5)),\"Branded\",IF(OR(ISNUMBER(SEARCH(\" pat \",D5)),ISNUMBER(SEARCH(\"- pat -\",D5))),\"Competitor\",\"Non-Branded\"))"
-    ws['Z3'].font = Font(size=8, italic=True, color=COLORS['muted'])
-    ws['AA3'] = "=TEXT(A5,\"YYYY\")\"-W\"&TEXT(WEEKNUM(A5),\"00\")"
-    ws['AA3'].font = Font(size=8, italic=True, color=COLORS['muted'])
-    ws['AB3'] = "=TEXT(A5,\"MMM YYYY\")"
-    ws['AB3'].font = Font(size=8, italic=True, color=COLORS['muted'])
+    # Note: Calculated columns Y-AB should be added manually after data paste
 
     # Set column widths
     widths = [14, 25, 18, 50, 10, 12, 10, 8, 12, 16, 20, 12, 12, 10, 10, 12, 12, 12, 12, 12, 14, 14, 14, 14, 12, 14, 12, 12]
@@ -459,11 +451,7 @@ def create_business_data_sheet(wb):
         cell.value = header
         apply_header_style(cell, 'competitor')
 
-    # Add formula instructions row
-    ws['S3'] = "=TEXT(A5,\"YYYY\")\"-W\"&TEXT(WEEKNUM(A5),\"00\")"
-    ws['S3'].font = Font(size=8, italic=True, color=COLORS['muted'])
-    ws['T3'] = "=TEXT(A5,\"MMM YYYY\")"
-    ws['T3'].font = Font(size=8, italic=True, color=COLORS['muted'])
+    # Note: Calculated columns S-T should be added manually after data paste
 
     # Column reference guide
     ws['A3'] = "Key columns: A=Date, B=Ordered Product Sales (Total Sales), D=Units Ordered, N=Sessions"
@@ -1370,8 +1358,8 @@ def main():
 
     wb = create_campaign_report_workbook()
 
-    # Save to file (v2 = Excel Online compatible)
-    output_path = os.path.join(os.path.dirname(__file__), "Campaign_Report_Template_v2.xlsx")
+    # Save to file (v3 = Excel Online compatible, no formula text)
+    output_path = os.path.join(os.path.dirname(__file__), "Campaign_Report_Template_v3.xlsx")
     wb.save(output_path)
 
     print(f"Excel template saved to: {output_path}")
